@@ -7,7 +7,7 @@ class ProjectController {
     }
 
     // Méthode pour afficher la page d'ajout de projet
-    public static function addProjectPage() {
+    public static function addProjectPage($pdo) {
         // Vérifie si l'utilisateur est connecté
         if (!isset($_SESSION['user']['id'])) {
             http_response_code(403);
@@ -15,9 +15,9 @@ class ProjectController {
             exit();
         }
 
-        // Afficher le formulaire d'ajout
+        // Affiche la page d'ajout
         $title = "Ajouter un projet";
-        require_once '../src/views/projects/add.php';
+        require '../src/views/projects/add.php';
     }
 
     // Ajouter un projet en base de données
@@ -53,6 +53,19 @@ class ProjectController {
         } catch (PDOException $e) {
             error_log("Erreur lors de la récupération des projets : " . $e->getMessage());
             return [];
+        }
+    }
+
+    public function deleteProject($userId, $projectId) {
+        try {
+            $sql = 'DELETE FROM projects WHERE id = :project_id AND user_id = :user_id';
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute(['project_id' => $projectId, 'user_id' => $userId]);
+
+            return $stmt->rowCount(); // Retourne 1 si un projet a été supprimé
+        } catch (PDOException $e) {
+            error_log("Erreur lors de la suppression du projet : " . $e->getMessage());
+            return 0;
         }
     }
 }

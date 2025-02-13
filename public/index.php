@@ -58,10 +58,8 @@ switch ($requestUri) {
         $projectController = new ProjectController($pdo);
 
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-            // Affiche la page pour ajouter un projet
-            $projectController::addProjectPage();
+            $projectController::addProjectPage($pdo); // Passe l'objet PDO
         } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Traite le formulaire d'ajout de projet
             if (!isset($_SESSION['user'])) {
                 http_response_code(403);
                 echo '403 - Accès interdit.';
@@ -76,17 +74,40 @@ switch ($requestUri) {
 
             if ($title && $description && $imagePath && $link) {
                 $projectController->addProject($userId, $title, $description, $imagePath, $link);
-                header('Location: /?success=1'); // Redirige vers la page d'accueil
+                header('Location: /projects/add?success=1'); // Redirige après ajout
                 exit();
             } else {
                 http_response_code(400);
                 echo '400 - Tous les champs sont requis.';
                 exit();
             }
-        } else {
-            http_response_code(405);
-            echo '405 - Méthode non autorisée.';
-            exit();
+        }
+        break;
+    case '/projects/delete':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!isset($_SESSION['user'])) {
+                http_response_code(403);
+                echo '403 - Accès interdit.';
+                exit();
+            }
+
+            $userId = $_SESSION['user']['id'];
+            $projectId = $_POST['project_id'] ?? null;
+
+            if ($projectId) {
+                $projectController = new ProjectController($pdo);
+                $deleted = $projectController->deleteProject($userId, $projectId);
+
+                if ($deleted) {
+                    header('Location: /projects/add?success=1'); // Recharger la page après suppression
+                    exit();
+                } else {
+                    echo 'Erreur : impossible de supprimer ce projet.';
+                }
+            } else {
+                http_response_code(400);
+                echo '400 - ID du projet manquant.';
+            }
         }
         break;
 
