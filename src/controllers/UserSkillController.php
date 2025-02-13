@@ -23,22 +23,28 @@ class UserSkillController {
         return $stmt->rowCount(); // 1 si la mise à jour réussit
     }
 
-    // Supprimer une compétence associée à un utilisateur
+    // Lister toutes les compétences d'un utilisateur
+    public function getUserSkills($userId) {
+        $sql = 'SELECT us.skill_id AS id, s.name, us.level
+               FROM user_skills us
+               JOIN skills s ON us.skill_id = s.id
+               WHERE us.user_id = :user_id';
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['user_id' => $userId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC); // Retourne un tableau associatif contenant 'id'
+    }
+
     public function removeUserSkill($userId, $skillId) {
         $sql = 'DELETE FROM user_skills WHERE user_id = :user_id AND skill_id = :skill_id';
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute(['user_id' => $userId, 'skill_id' => $skillId]);
-        return $stmt->rowCount(); // 1 si la suppression réussit
+
+        $stmt->execute([
+            'user_id' => $userId,
+            'skill_id' => $skillId
+        ]);
+
+        return $stmt->rowCount(); // Retourne 1 si la suppression a fonctionné
     }
 
-    // Lister toutes les compétences d'un utilisateur
-    public function getUserSkills($userId) {
-        $sql = 'SELECT s.name, s.description, us.level
-                FROM user_skills us
-                JOIN skills s ON us.skill_id = s.id
-                WHERE us.user_id = :user_id';
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute(['user_id' => $userId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC); // Compétences associées à l'utilisateur
-    }
+
 }

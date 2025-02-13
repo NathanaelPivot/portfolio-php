@@ -6,6 +6,7 @@ require_once '../config/database.php';
 require_once '../src/controllers/AuthController.php';
 require_once '../src/controllers/SkillController.php';
 require_once '../src/controllers/UserSkillController.php';
+require_once '../src/controllers/ProjectController.php';
 
 // Analyse de l'URL demandée
 $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -53,6 +54,42 @@ switch ($requestUri) {
         require_once '../src/views/skills/manage.php';
         break;
 
+    case '/projects/add':
+        $projectController = new ProjectController($pdo);
+
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            // Affiche la page pour ajouter un projet
+            $projectController::addProjectPage();
+        } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Traite le formulaire d'ajout de projet
+            if (!isset($_SESSION['user'])) {
+                http_response_code(403);
+                echo '403 - Accès interdit.';
+                exit();
+            }
+
+            $userId = $_SESSION['user']['id'];
+            $title = $_POST['title'] ?? null;
+            $description = $_POST['description'] ?? null;
+            $imagePath = $_POST['image_path'] ?? null;
+            $link = $_POST['link'] ?? null;
+
+            if ($title && $description && $imagePath && $link) {
+                $projectController->addProject($userId, $title, $description, $imagePath, $link);
+                header('Location: /?success=1'); // Redirige vers la page d'accueil
+                exit();
+            } else {
+                http_response_code(400);
+                echo '400 - Tous les champs sont requis.';
+                exit();
+            }
+        } else {
+            http_response_code(405);
+            echo '405 - Méthode non autorisée.';
+            exit();
+        }
+        break;
+
     // Traitement POST : ajout rapide d'une compétence
     case '/skills/add':
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -75,6 +112,7 @@ switch ($requestUri) {
             exit();
         }
         break;
+
 
     default:
         // Page introuvable

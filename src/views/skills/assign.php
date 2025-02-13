@@ -28,20 +28,42 @@ $userSkillController = new UserSkillController($pdo);
 $skills = $skillController->getSkills();
 
 // Gestion de l'attribution des compétences
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['skill_id'], $_POST['level'])) {
     $skillId = $_POST['skill_id'];
     $level = $_POST['level'];
 
-    if ($skillId && $level) {
+    if (!empty($skillId) && !empty($level)) {
         $userSkillController->assignSkillToUser($userId, $skillId, $level);
-        echo "<p>Compétence ajoutée avec succès !</p>";
+        echo '<p>Compétence ajoutée avec succès !</p>';
     } else {
-        echo "<p>Erreur : veuillez remplir tous les champs correctement.</p>";
+        echo '<p>Erreur : veuillez remplir tous les champs correctement.</p>';
+    }
+}
+
+// Gestion de la suppression des compétences
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_skill_id'])) {
+    $skillIdToDelete = $_POST['delete_skill_id'];
+
+    // Vérification si la donnée est un ID valide (non vide et numérique positif)
+    if (!empty($skillIdToDelete) && is_numeric($skillIdToDelete) && intval($skillIdToDelete) > 0) {
+        $skillIdToDelete = intval($skillIdToDelete); // Conversion en entier
+        $isDeleted = $userSkillController->removeUserSkill($userId, $skillIdToDelete);
+
+        if ($isDeleted) {
+            echo '<p>Compétence supprimée avec succès !</p>';
+        } else {
+            echo '<p>Erreur : la compétence n\'existe pas ou n\'a pas pu être supprimée.</p>';
+        }
+    } else {
+        echo '<p>Erreur : ID de compétence invalide.</p>';
     }
 }
 
 // Récupérer les compétences déjà assignées
 $userSkills = $userSkillController->getUserSkills($userId);
+
+// Débogage : Vérifiez les données reçues et récupérées
+
 ?>
 
     <h1>Gérer les compétences</h1>
@@ -53,7 +75,7 @@ $userSkills = $userSkillController->getUserSkills($userId);
         <select name="skill_id" id="skill_id" required>
             <?php foreach ($skills as $skill): ?>
                 <option value="<?= htmlspecialchars($skill['id']); ?>">
-                    <?= htmlspecialchars($skill['name']); ?>
+                    <?= htmlspecialchars($skill['name'] ?? 'Nom inconnu'); ?>
                 </option>
             <?php endforeach; ?>
         </select>
@@ -72,7 +94,12 @@ $userSkills = $userSkillController->getUserSkills($userId);
     <ul>
         <?php foreach ($userSkills as $userSkill): ?>
             <li>
-                <?= htmlspecialchars($userSkill['name']); ?> - Niveau : <?= htmlspecialchars($userSkill['level']); ?>
+                <?= htmlspecialchars($userSkill['name'] ?? 'Nom inconnu'); ?> -
+                Niveau : <?= htmlspecialchars($userSkill['level'] ?? 'Inconnu'); ?>
+                <form method="POST" style="display:inline;">
+                    <input type="hidden" name="delete_skill_id" value="<?= htmlspecialchars($userSkill['id'] ?? ''); ?>">
+                    <button type="submit">Supprimer</button>
+                </form>
             </li>
         <?php endforeach; ?>
     </ul>
