@@ -20,10 +20,6 @@ $userId = $_SESSION['user']['id'];
 $projects = $projectController->getProjects($userId);
 ?>
 
-<?php if (isset($_GET['success'])): ?>
-    <p style="color: green;">Le projet a bien été supprimé.</p>
-<?php endif; ?>
-
     <h1>Ajouter un Projet</h1>
     <form method="POST" action="/projects/add">
         <label for="title">Titre du projet :</label><br>

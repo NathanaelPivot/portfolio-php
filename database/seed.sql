@@ -50,6 +50,9 @@ CREATE TABLE projects (
 INSERT INTO users (username, email, password, role)
 VALUES ('admin', 'admin@example.com', '$2y$10$vT/q/xvjs.SE47Lejlpqx.zIITFSnPEDZZeZzmMv9Ok.jlTKYzSwS', 'admin');
 
+INSERT INTO users (username, email, password, role)
+VALUES ('user', 'user@example.com', '$2y$10$vT/q/xvjs.SE47Lejlpqx.zIITFSnPEDZZeZzmMv9Ok.jlTKYzSwS', 'user');
+
 INSERT INTO skills (name, description) VALUES
                                            ('PHP', 'Langage de programmation backend.'),
                                            ('JavaScript', 'Langage utilisé pour le frontend et le backend.'),

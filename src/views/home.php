@@ -33,7 +33,7 @@ if (isset($_SESSION['user']['id'])) {
                 <li><a href="/skills/manage">Gérer les compétences</a></li>
             <?php endif; ?>
 
-            <li><a href="/projects/add">Ajouter un projet</a></li>
+            <li><a href="/projects/add">Gérer les projets</a></li>
         </ul>
 
         <hr>

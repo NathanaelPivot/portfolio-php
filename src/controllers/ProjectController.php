@@ -29,7 +29,7 @@ class ProjectController {
             'user_id' => $userId,
             'title' => $title,
             'description' => $description,
-            'image_path' => $imagePath,
+            'image_path' => "/images/test.png",
             'link' => $link
         ]);
         return $stmt->rowCount();

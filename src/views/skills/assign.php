@@ -81,7 +81,7 @@ $userSkills = $userSkillController->getUserSkills($userId);
         </select>
         <br>
         <label for="level">Niveau :</label>
-        <input type="number" name="level" id="level" min="1" max="3" required>
+        <input type="number" name="level" id="level" min="1" max="4" required>
         <br>
         <button type="submit">Attribuer la compétence</button>
     </form>
