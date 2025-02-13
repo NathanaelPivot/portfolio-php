@@ -1,0 +1,5 @@
+    // Ajoutez ceci à `public/index.php` pour activer les rapports d'erreurs :
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+
