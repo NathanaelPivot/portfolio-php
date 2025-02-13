@@ -102,5 +102,5 @@ Une question ou un bug ? Contactez-moi : nathanael.pivot@ynov.com
 
 ## Remerciements
 
-Nathanael Pivot (même si le projet est pas fou)
+Nathanael Pivot (même si mon projet est pas fou)
 Nicolas Faessel (Merci Nico même si j'ai pas trop kiffé le PHP c'était cool de t'avoir en cours 😉)
